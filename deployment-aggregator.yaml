@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aggregator         # Deployment name
+  namespace: kafka         # Namespace for the deployment
+spec:
+  selector:
+    matchLabels:
+      app: aggregator      # Match labels for the Pods to be managed by this Deployment
+  replicas: 1              # Number of desired replicas
+  template:
+    metadata:
+      labels:
+        app: aggregator    # Labels for the Pods created by this Deployment
+    spec:
+      containers:
+      - name: aggregator   # Container name
+        image: mikaelsabuhi/aggregator:latest   # Docker image for the container
+        env:
+        - name: ELASTIC_PASSWORD
+          value: "elasticpassword"   # Environment variable for the Elastic password
+        resources:
+          requests:       # Resource requests for the container
+            memory: "4G"
+            cpu: "1"
+          limits:         # Resource limits for the container
+            memory: "8G"
+            cpu: "1"

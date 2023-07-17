@@ -1,0 +1,8 @@
+requests
+confluent-kafka
+elasticsearch
+elasticsearch_dsl
+numpyencoder
+numpy
+tensorflow
+pandas

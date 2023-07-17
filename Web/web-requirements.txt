@@ -1,0 +1,11 @@
+## just deploy the kustomization file
+sudo kubectl apply -k ./web
+
+
+## To delete the deployment
+sudo kubectl delete -k ./web
+
+
+## In case you need to re-build the docker container use the following:
+sudo docker build . -t mikaelsabuhi/web:latest
+sudo docker push mikaelsabuhi/web:latest

@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+# metadata:
+namespace: kafka
+commonLabels:
+  app: web
+
+resources:
+- deployment.yaml
+- service.yaml
+# - ingress.yaml
+
+configMapGenerator:
+- files:
+  - default.conf
+  name: nginx-config

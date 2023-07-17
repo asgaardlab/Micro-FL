@@ -1,0 +1,6 @@
+requests
+confluent-kafka
+numpyencoder
+numpy
+tensorflow
+random_username

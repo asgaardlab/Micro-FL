@@ -1,0 +1,25 @@
+# This YAML file configures a Kibana instance for the Elasticsearch cluster
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: mikael-elasticsearch
+  namespace: kafka
+spec:
+  version: 8.7.0
+  count: 1
+  elasticsearchRef:
+    name: mikael-elasticsearch
+  podTemplate:
+    spec:
+      containers:
+        - name: kibana
+          env:
+            - name: NODE_OPTIONS
+              value: "--max-old-space-size=2048" # Limit memory usage
+          resources:
+            requests: # Resource requests for Kibana container
+              memory: 4Gi
+              cpu: 1
+            limits: # Resource limits for Kibana container
+              memory: 4Gi
+              cpu: 1

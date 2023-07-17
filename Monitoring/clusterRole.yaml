@@ -1,0 +1,65 @@
+# Define a ClusterRole that allows Prometheus to access resources in the monitoring namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus
+  namespace: monitoring
+rules:
+  # Allow access to nodes, nodes/metrics, services, endpoints, and pods
+  - apiGroups: [""]
+    resources:
+      - nodes
+      - nodes/metrics
+      - services
+      - endpoints
+      - pods
+    verbs: ["get", "list", "watch"]
+  # Allow access to ingresses in the extensions and networking.k8s.io API groups
+  - apiGroups:
+      - extensions
+      - networking.k8s.io
+    resources:
+      - ingresses
+    verbs: ["get", "list", "watch"]
+  # Allow access to configmaps
+  - apiGroups: [""]
+    resources:
+      - configmaps
+    verbs: ["get"]
+  # Allow access to the /metrics endpoint
+  - nonResourceURLs: ["/metrics"]
+    verbs: ["get"]
+
+---
+# Create a ServiceAccount for Prometheus in the monitoring namespace
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+  namespace: monitoring
+
+---
+# Create a Secret containing the token for the ServiceAccount
+apiVersion: v1
+kind: Secret
+metadata:
+  name: prometheus-sa-token
+  namespace: monitoring
+  annotations:
+    kubernetes.io/service-account.name: prometheus
+type: kubernetes.io/service-account-token
+
+---
+# Define a ClusterRoleBinding that binds the prometheus ClusterRole to the prometheus ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus
+subjects:
+  - kind: ServiceAccount
+    name: prometheus
+    namespace: monitoring

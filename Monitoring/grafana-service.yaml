@@ -1,0 +1,22 @@
+# Create a Grafana Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: monitoring
+  annotations:
+    # Enable Prometheus scraping for this service
+    prometheus.io/scrape: 'true'
+    # Set the scraping port for Prometheus
+    prometheus.io/port: '3000'
+spec:
+  # Select the Grafana pods
+  selector:
+    app: grafana
+  # Expose the service as a NodePort
+  type: LoadBalancer
+  ports:
+    - port: 3000
+      targetPort: 3000
+      # Define the node port on which the service is exposed
+      nodePort: 32000

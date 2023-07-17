@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-deployment
+  namespace: users
+spec:
+  selector:
+    matchLabels:
+      app: users
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+      - name: users
+        image: mikaelsabuhi/user_generator:latest
+        env:
+        - name: IP_CONF
+          value: "34.31.32.124"
+        - name: IP_WEB
+          value: "34.121.110.90"
+        - name: DATASET_NAME
+          value: "MNIST"
+        resources:
+          requests:
+            memory: "6G"
+            cpu: "1"
+          limits:
+            memory: "10G"
+            cpu: "1"

@@ -1,0 +1,35 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: elastic-connector-test
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: my-connect-cluster
+spec:
+  class: org.apache.camel.kafkaconnector.elasticsearchindexsink.CamelElasticsearchindexsinkSinkConnector
+  tasksMax: 10
+  autoRestart:
+    enabled: true
+  config:
+    camel.kamelet.elasticsearch-index-sink.user: elastic
+    camel.kamelet.elasticsearch-index-sink.password: elasticpassword
+    camel.kamelet.elasticsearch-index-sink.enableSSL: false
+    camel.kamelet.elasticsearch-index-sink.hostAddresses: mikael-elasticsearch-es-http:9200
+    camel.kamelet.elasticsearch-index-sink.clusterName: mikael-elasticsearch
+    camel.kamelet.elasticsearch-index-sink.indexName: topic-test
+    key.converter: org.apache.kafka.connect.json.JsonConverter
+    header.converter: org.apache.kafka.connect.json.JsonConverter
+    header.converter.schema.enable: false
+    key.converter.schemas.enable: false
+    value.converter: org.apache.kafka.connect.json.JsonConverter
+    value.converter.schemas.enable: false
+    schemas.enable: false
+    key.ignore: true
+    schema.ignore: true
+    behavior.on.malformed.documents: ignore
+    topics: topic-test
+    type.name: _doc
+    # Enable error logging and tolerance
+    errors.log.enable: true
+    errors.log.include.messages: true
+    errors.tolerance: all

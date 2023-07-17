@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-deployment
+  namespace: users
+spec:
+  selector:
+    matchLabels:
+      app: users
+  replicas: 10
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+      - name: users-1
+        image: mikaelsabuhi/user_generator:latest
+        env:
+        - name: IP_CONF
+          value: "34.29.19.102"
+        - name: IP_WEB
+          value: "35.184.111.129"
+        - name: DATASET_NAME
+          value: "MNIST"
+        resources:
+          requests:
+            memory: "6G"
+            cpu: "1"
+          limits:
+            memory: "10G"
+            cpu: "1"
+      - name: users-2
+        image: mikaelsabuhi/user_generator:latest
+        env:
+        - name: IP_CONF
+          value: "34.29.19.102"
+        - name: IP_WEB
+          value: "35.184.111.129"
+        - name: DATASET_NAME
+          value: "MNIST"
+        resources:
+          requests:
+            memory: "6G"
+            cpu: "1"
+          limits:
+            memory: "10G"
+            cpu: "1"
+      - name: users-3
+        image: mikaelsabuhi/user_generator:latest
+        env:
+        - name: IP_CONF
+          value: "34.29.19.102"
+        - name: IP_WEB
+          value: "35.184.111.129"
+        - name: DATASET_NAME
+          value: "MNIST"
+        resources:
+          requests:
+            memory: "6G"
+            cpu: "1"
+          limits:
+            memory: "10G"
+            cpu: "1"
+      - name: users-4
+        image: mikaelsabuhi/user_generator:latest
+        env:
+        - name: IP_CONF
+          value: "34.29.19.102"
+        - name: IP_WEB
+          value: "35.184.111.129"
+        - name: DATASET_NAME
+          value: "MNIST"
+        resources:
+          requests:
+            memory: "6G"
+            cpu: "1"
+          limits:
+            memory: "10G"
+            cpu: "1"
+      - name: users-5
+        image: mikaelsabuhi/user_generator:latest
+        env:
+        - name: IP_CONF
+          value: "34.29.19.102"
+        - name: IP_WEB
+          value: "35.184.111.129"
+        - name: DATASET_NAME
+          value: "MNIST"
+        resources:
+          requests:
+            memory: "6G"
+            cpu: "1"
+          limits:
+            memory: "10G"
+            cpu: "1"

@@ -1,0 +1,3 @@
+sudo kubectl create namespace users
+sudo kubectl apply -f Users/deployment-users.yaml 
+sudo kubectl delete -f Users/deployment-users.yaml

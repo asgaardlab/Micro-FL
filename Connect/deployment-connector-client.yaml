@@ -1,0 +1,41 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: elastic-connector-client
+  namespace : kafka
+  labels:
+    strimzi.io/cluster: my-connect-cluster
+spec:
+  # The connector class to use
+  class: org.apache.camel.kafkaconnector.elasticsearchindexsink.CamelElasticsearchindexsinkSinkConnector
+  # Maximum number of tasks to run in parallel
+  tasksMax: 10
+  # Automatically restart the connector when it fails
+  autoRestart:
+    enabled: true
+
+  config:
+    # Elasticsearch configuration
+    camel.kamelet.elasticsearch-index-sink.user: elastic
+    camel.kamelet.elasticsearch-index-sink.password: elasticpassword
+    camel.kamelet.elasticsearch-index-sink.enableSSL : false
+    camel.kamelet.elasticsearch-index-sink.hostAddresses: mikael-elasticsearch-es-http:9200
+    camel.kamelet.elasticsearch-index-sink.clusterName: mikael-elasticsearch
+    camel.kamelet.elasticsearch-index-sink.indexName: client-message
+    # Kafka configuration
+    key.converter: org.apache.kafka.connect.json.JsonConverter
+    header.converter: org.apache.kafka.connect.json.JsonConverter
+    header.converter.schema.enable : false
+    key.converter.schemas.enable: false
+    value.converter: org.apache.kafka.connect.json.JsonConverter
+    value.converter.schemas.enable: false
+    schemas.enable: false
+    key.ignore: true
+    schema.ignore: true
+    behavior.on.malformed.documents : ignore
+    topics: client-message
+    type.name : _doc
+    # Logging configuration
+    errors.log.enable : true
+    errors.log.include.messages : true
+    errors.tolerance : all

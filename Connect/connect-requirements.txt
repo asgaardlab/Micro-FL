@@ -1,0 +1,48 @@
+# Making Apache Camel Kafka to Elasticsearch sink connector:
+# Download the Elasticsearch Camel Connector 
+https://camel.apache.org/camel-kafka-connector/3.18.x/reference/index.html
+# Documentation: 
+https://camel.apache.org/camel-kafka-connector/3.18.x/reference/connectors/camel-elasticsearch-index-sink-kafka-sink-connector.html
+
+
+
+# Create a Dockerfile
+nano Dockerfile
+
+
+# then put this in the Dockerfile:
+FROM quay.io/strimzi/kafka:latest-kafka-3.3.1
+USER root:root
+RUN mkdir -p /opt/kafka/plugins/camel
+COPY ./my-plugins/ /opt/kafka/plugins/camel
+USER 1001
+
+# the camel configuration files should be in the ./my-plugins/ directory
+sudo docker build . -t mikaelsabuhi/kafka-connect-elasticsearch:latest
+sudo docker push mikaelsabuhi/kafka-connect-elasticsearch:latest
+
+
+
+## >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# This created image will contain the Apache Camel connector for Strimzi Kafka
+# Now we neeed to deploy the connect pods
+sudo kubectl apply -f Connect/deployment-connect.yaml 
+
+
+# Then we need to deploy the connectors to the elasticsearch cluster
+# sudo kubectl apply -f Connect/deployment-connector-test.yaml
+sudo kubectl apply -f Connect/deployment-connector-aggregator.yaml
+sudo kubectl apply -f Connect/deployment-connector-client.yaml
+sudo kubectl apply -f Connect/deployment-connector-control.yaml
+sudo kubectl apply -f Connect/deployment-connector-dataset.yaml
+sudo kubectl apply -f Connect/deployment-connector-status.yaml
+
+# To delete the connectors 
+sudo kubectl delete -f Connect/deployment-connector-*
+
+
+# To see the Connect Configurations:
+sudo kubectl describe KafkaConnect -n kafka
+
+# To see the connectors:
+sudo kubectl get KafkaConnector -n kafka

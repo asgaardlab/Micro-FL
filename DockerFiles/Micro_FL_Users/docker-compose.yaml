@@ -1,0 +1,11 @@
+version: "3"
+services:
+  users:
+    image: mikaelsabuhi/user_generator
+    container_name: users
+    environment:
+      DATASET_NAME : "MNIST"
+      IP_CONF : "129.128.215.44"
+      IP_WEB : "129.128.215.44"
+
+

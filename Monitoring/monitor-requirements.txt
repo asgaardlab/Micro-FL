@@ -1,0 +1,43 @@
+## create a namespace for monitoring 
+
+sudo kubectl create namespace monitoring
+
+## Create promethues operator deployment yaml file
+curl -s https://raw.githubusercontent.com/coreos/prometheus-operator/master/bundle.yaml | sed -e '/[[:space:]]*namespace: [a-zA-Z0-9-]*$/s/namespace:[[:space:]]*[a-zA-Z0-9-]*$/namespace: monitoring/' > Monitoring/prometheus-operator-deployment.yaml
+sudo kubectl create -f Monitoring/prometheus-operator-deployment.yaml -n monitoring
+
+## Then apply the ClusterROle
+sudo kubectl apply -f Monitoring/clusterRole.yaml
+
+## Create the deployment
+sudo kubectl apply -f Monitoring/strimzi-pod-monitor.yaml
+sudo kubectl apply -f Monitoring/prometheus-deployment.yaml
+sudo kubectl apply -f Monitoring/prometheus-additional.yaml
+
+sudo kubectl apply -f Monitoring/prometheus-service.yaml
+
+# To make promethues accecible as a load balancer do this:
+sudo kubectl patch svc prometheus-service -p '{"spec":{"type":"LoadBalancer"}}' -n monitoring
+## in case of portforwarding do this:
+sudo kubectl port-forward service/prometheus-service -n monitoring 8080
+
+
+
+sudo kubectl get deployments -n monitoring
+
+
+## setup Grafana
+sudo kubectl apply -f Monitoring/grafana-datasource-config.yaml
+sudo kubectl apply -f Monitoring/grafana-deployment.yaml 
+sudo kubectl apply -f Monitoring/grafana-service.yaml
+
+sudo kubectl port-forward service/grafana -n monitoring 3000
+
+# After you log in, select Import on the navigation bar on the left. Enter 315,6417 as the code and load it in.
+# In the dashboard change these:
+# name --> name=~"^*_.*" ,by (pod_name) --> by (pod)
+
+
+## The final version of the dashboard is ready to be used in the following json file
+Kubernetes cluster monitoring (via Prometheus)-Dashboard.json
+

@@ -1,0 +1,71 @@
+# This YAML file configures an Elasticsearch cluster with dedicated master and data nodes
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: mikael-elasticsearch
+  namespace: kafka
+spec:
+  version: 8.7.0
+  nodeSets:
+    # Master nodes configuration
+    - name: master
+      count: 3
+      podTemplate:
+        spec:
+          containers:
+            - name: elasticsearch
+              resources:
+                requests: # Resource requests for master nodes
+                  memory: 4Gi
+                  cpu: 1
+                limits: # Resource limits for master nodes
+                  memory: 4Gi
+                  cpu: 1
+      config:
+        node.roles: ["master"]
+        xpack.ml.enabled: false
+        node.store.allow_mmap: false
+      volumeClaimTemplates:
+        - metadata:
+            name: elasticsearch-data
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 10Gi
+            storageClassName: premium-rwo
+
+    # Data nodes configuration
+    - name: data
+      count: 3
+      podTemplate:
+        spec:
+          containers:
+            - name: elasticsearch
+              resources:
+                requests: # Resource requests for data nodes
+                  memory: 16Gi
+                  cpu: 4
+                limits: # Resource limits for data nodes
+                  memory: 16Gi
+                  cpu: 4
+      config:
+        node.roles: ["data", "ingest"]
+        xpack.ml.enabled: false
+        node.store.allow_mmap: false
+      volumeClaimTemplates:
+        - metadata:
+            name: elasticsearch-data
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 300Gi
+            storageClassName: premium-rwo
+
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true # Disable self-signed certificate for HTTP

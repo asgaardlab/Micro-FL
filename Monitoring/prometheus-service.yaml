@@ -1,0 +1,24 @@
+# Create a Prometheus Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-service
+  namespace: monitoring
+  labels:
+    app: prometheus-server
+  annotations:
+    # Enable Prometheus scraping for this service
+    prometheus.io/scrape: 'true'
+    # Set the scraping port for Prometheus
+    prometheus.io/port: '9090'
+spec:
+  # Select the Prometheus pods
+  selector:
+    app.kubernetes.io/name: prometheus
+  # Expose the service as a NodePort
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 9090
+      # Uncomment the following line to define the node port on which the service is exposed
+      # nodePort: 30000

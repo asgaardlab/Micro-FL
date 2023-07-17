@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    app: web
+  namespace: kafka
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: app
+          image: mikaelsabuhi/web:latest
+          env:
+          - name: ELASTIC_PASSWORD
+            value: "elasticpassword"
+          resources:
+            requests:
+              memory: 4Gi
+              cpu: "1"
+            limits:
+              memory: 4Gi
+              cpu: "1"
+        - name: nginx
+          image: docker.io/nginx:mainline
+          resources:
+              requests:
+                memory: 4Gi
+                cpu: "1"
+              limits:
+                memory: 4Gi
+                cpu: "1"
+          ports:
+          - name: http
+            containerPort: 80
+          volumeMounts:
+          - name: nginx-config
+            mountPath: /etc/nginx/conf.d
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config

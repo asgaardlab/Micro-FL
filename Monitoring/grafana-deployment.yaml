@@ -1,0 +1,69 @@
+# Create a PersistentVolumeClaim for Grafana storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-storage
+  namespace: monitoring
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+
+---
+# Create a Grafana Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      name: grafana
+      labels:
+        app: grafana
+    spec:
+      # Set security context for Grafana container
+      securityContext:
+        fsGroup: 472
+        supplementalGroups:
+          - 0
+      containers:
+        - name: grafana
+          image: grafana/grafana:latest
+          ports:
+            - name: grafana
+              containerPort: 3000
+          resources:
+            limits:
+              memory: "4Gi"
+              cpu: "1"
+            requests:
+              memory: "4Gi"
+              cpu: "1"
+          # Mount volumes for Grafana storage and data sources
+          volumeMounts:
+            - mountPath: /var/lib/grafana
+              name: grafana-storage
+            - mountPath: /etc/grafana/provisioning/datasources
+              name: grafana-datasources
+              readOnly: false
+      volumes:
+        # Use the PersistentVolumeClaim for Grafana storage
+        - name: grafana-storage
+          persistentVolumeClaim:
+            claimName: grafana-storage
+        # Uncomment the following lines to use an emptyDir volume instead of a PersistentVolumeClaim for Grafana storage
+        # - name: grafana-storage
+        #   emptyDir: {}
+        # Use a ConfigMap for Grafana data sources
+        - name: grafana-datasources
+          configMap:
+            defaultMode: 420
+            name: grafana-datasources

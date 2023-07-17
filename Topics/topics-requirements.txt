@@ -1,0 +1,6 @@
+### Run this to create the topics
+sudo kubectl apply -f ./Topics/topics-deployment.yaml
+
+
+### to see the topics
+sudo kubectl get kafkatopics -o wide -w -n kafka

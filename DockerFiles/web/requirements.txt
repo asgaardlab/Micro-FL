@@ -1,0 +1,10 @@
+Flask
+gunicorn
+flask_restful
+elasticsearch
+elasticsearch_dsl
+bcrypt
+requests
+confluent-kafka
+numpyencoder
+

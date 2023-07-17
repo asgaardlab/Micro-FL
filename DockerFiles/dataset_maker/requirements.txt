@@ -1,0 +1,6 @@
+numpyencoder
+numpy
+tensorflow
+confluent-kafka
+elasticsearch
+elasticsearch_dsl

@@ -1,0 +1,45 @@
+# Create a Prometheus Custom Resource
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus-deployment
+  namespace: monitoring
+  labels:
+    app: prometheus-server
+spec:
+  replicas: 1
+  image: prom/prometheus
+  serviceAccountName: prometheus
+  # Configure the service monitor selector
+  serviceMonitorSelector: {}
+  # Configure the pod monitor selector
+  podMonitorSelector:
+    matchLabels:
+      app: strimzi
+  resources:
+    requests:
+      memory: "4G"
+      cpu: "1"
+    limits:
+      memory: "4G"
+      cpu: "1"
+  # Configure additional scrape configs
+  additionalScrapeConfigs:
+    name: additional-scrape-configs
+    key: prometheus-additional.yaml
+
+---
+# Create a persisted Prometheus Custom Resource
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: persisted
+spec:
+  storage:
+    volumeClaimTemplate:
+      spec:
+        # Define the storage class name
+        storageClassName: STANDARD
+        resources:
+          requests:
+            storage: 20Gi

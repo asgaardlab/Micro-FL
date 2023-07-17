@@ -1,0 +1,35 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: elastic-connector-dataset     # name of the KafkaConnector resource
+  namespace: kafka                    # namespace where the KafkaConnector resource is deployed
+  labels:
+    strimzi.io/cluster: my-connect-cluster  # label to associate the KafkaConnector with a KafkaConnect cluster
+spec:
+  class: org.apache.camel.kafkaconnector.elasticsearchindexsink.CamelElasticsearchindexsinkSinkConnector  # name of the Kafka Connect sink connector class
+  tasksMax: 10                         # maximum number of tasks this KafkaConnector can create
+  autoRestart:
+    enabled: true                      # if true, KafkaConnector will automatically restart if it fails
+  config:
+    camel.kamelet.elasticsearch-index-sink.user: elastic   # Elasticsearch username for authentication
+    camel.kamelet.elasticsearch-index-sink.password: elasticpassword   # Elasticsearch password for authentication
+    camel.kamelet.elasticsearch-index-sink.enableSSL: false     # whether to enable SSL for Elasticsearch connection
+    camel.kamelet.elasticsearch-index-sink.hostAddresses: mikael-elasticsearch-es-http:9200   # Elasticsearch host address
+    camel.kamelet.elasticsearch-index-sink.clusterName: mikael-elasticsearch   # Elasticsearch cluster name
+    camel.kamelet.elasticsearch-index-sink.indexName: topic-dataset    # Elasticsearch index name
+    key.converter: org.apache.kafka.connect.json.JsonConverter     # class to be used for deserializing key data from Kafka topics
+    header.converter: org.apache.kafka.connect.json.JsonConverter  # class to be used for deserializing header data from Kafka topics
+    header.converter.schema.enable: false   # whether to enable schema for header converter
+    key.converter.schemas.enable: false     # whether to enable schema for key converter
+    value.converter: org.apache.kafka.connect.json.JsonConverter   # class to be used for deserializing value data from Kafka topics
+    value.converter.schemas.enable: false   # whether to enable schema for value converter
+    schemas.enable: false                   # whether to enable schema registry
+    key.ignore: true                        # whether to ignore key data from Kafka topics
+    schema.ignore: true                     # whether to ignore schema data from Kafka topics
+    behavior.on.malformed.documents: ignore # how to handle malformed documents
+    topics: topic-dataset                   # Kafka topics to consume
+    type.name: _doc                         # type name used in Elasticsearch index
+    #logging 
+    errors.log.enable: true                 # whether to enable logging for errors
+    errors.log.include.messages: true       # whether to include error messages in the logs
+    errors.tolerance: all                   # how to handle errors (all, none, or custom)
